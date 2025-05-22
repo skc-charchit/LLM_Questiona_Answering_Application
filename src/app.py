@@ -243,7 +243,7 @@ class PDFQAApp:
 
             # Add footer
             st.markdown("---")
-            st.markdown("Powered by Together.ai and LangChain")
+            st.markdown("Created by Shree Kumar Chandan Charchit")
         else:
             # Display instructions for fixing API key issues
             st.markdown("""
