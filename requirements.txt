@@ -1,13 +1,29 @@
-langchain==0.2.1                # Core LangChain functionality
-langchain-community==0.2.1     # Community integrations (document loaders, embeddings, etc.)
-streamlit==1.34.0              # UI dashboards and chat interfaces
-pypdf==4.2.0                   # PDF parsing library
-unstructured==0.13.0           # Parsing unstructured data (PDFs, DOCX, HTML)
-sentence-transformers==3.2.0   # Embedding generation
-faiss-cpu==1.7.4               # Vector database for similarity search (CPU version)
-huggingface_hub==0.24.0        # Access models from Hugging Face
-tiktoken==0.7.0                # Token counting for OpenAI models
-python-dotenv==1.0.0           # Environment variable management
-numpy>=1.22.0                  # Required for vector operations
-tqdm>=4.65.0                   # Progress bars
-pydantic>=2.0.0                # Data validation
+langchain==0.2.1               
+langchain-core>=0.2.1          
+langchain-community==0.2.1     
+langchain-together>=0.0.1      
+langchain-text-splitters>=0.1.0 
+together==0.2.11               
+streamlit==1.34.0              
+requests>=2.31.0               
+# Document processing
+pypdf==4.2.0                   
+unstructured==0.13.0           
+docx2txt>=0.8                  
+openpyxl>=3.1.2                
+python-pptx>=0.6.21            
+beautifulsoup4>=4.12.2         
+pandas>=2.0.0                 
+lxml>=4.9.0                    
+pillow>=10.0.0                 
+
+# Embeddings and vector storage
+sentence-transformers==3.2.0   
+faiss-cpu==1.7.4               
+
+# Utilities
+python-dotenv==1.0.0           
+numpy>=1.22.0                  
+tqdm>=4.65.0                   
+pydantic>=2.0.0                
+langchain-together

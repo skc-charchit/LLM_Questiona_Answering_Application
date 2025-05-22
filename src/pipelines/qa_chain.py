@@ -1,40 +1,29 @@
-import os
-from dotenv import load_dotenv
-from langchain_community.llms import HuggingFaceHub
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain.prompts import PromptTemplate
-
-# Load environment variables
-load_dotenv()
+from langchain_core.prompts import PromptTemplate
 
 class QAChain:
     """Class for creating and managing question-answering chains."""
 
-    def __init__(self, model_repo_id=None, temperature=0.01, max_length=512, memory_k=5):
+    def __init__(self, llm=None, temperature=0.7, max_output_tokens=2048, memory_k=5):
         """
         Initialize with model parameters.
 
         Args:
-            model_repo_id: Hugging Face model repository ID
+            llm: Language model instance (if None, will be set by the caller)
             temperature: Temperature for text generation
-            max_length: Maximum length of generated text
+            max_output_tokens: Maximum number of tokens to generate
             memory_k: Number of conversation turns to keep in memory
         """
-        self.model_repo_id = model_repo_id or os.getenv(
-            "LLM_MODEL_REPO_ID",
-            "TheBloke/phi-2-GGUF"     
-            )
-        
+        self.llm = llm  # Will be set by the caller if None
         self.temperature = temperature
-        self.max_length = max_length
+        self.max_output_tokens = max_output_tokens
         self.memory_k = memory_k
 
-        # Initialize LLM
-        self.llm = HuggingFaceHub(
-            repo_id=self.model_repo_id,
-            model_kwargs={"temperature": self.temperature, "max_length": self.max_length}
-        )
+        if self.llm:
+            print("Language model provided externally")
+        else:
+            print("Warning: No language model provided. Make sure to set it before creating a chain.")
 
         # Initialize memory
         self.memory = ConversationBufferWindowMemory(
@@ -46,7 +35,7 @@ class QAChain:
         # Define prompt template
         self.prompt_template = PromptTemplate(
             input_variables=["context", "question"],
-            template="You are an expert assistant. Use the following PDF content to answer the user's question.\n\nContent: {context}\n\nQuestion: {question}\nAnswer:"
+            template="You are an expert assistant. Use the following document content to answer the user's question.\n\nContent: {context}\n\nQuestion: {question}\nAnswer:"
         )
 
     def create_chain(self, vectorstore):
@@ -61,7 +50,7 @@ class QAChain:
         """
         conversation_chain = ConversationalRetrievalChain.from_llm(
             llm=self.llm,
-            retriever=vectorstore.as_retriever(),
+            retriever=vectorstore.as_retriever(search_type="similarity"),
             memory=self.memory,
             combine_docs_chain_kwargs={"prompt": self.prompt_template}
         )
@@ -79,41 +68,7 @@ class QAChain:
         Returns:
             Answer to the question
         """
-        response = chain({"question": question})
-        return response["answer"]
+        response = chain.invoke({"question": question})
+        return response.get("answer", "No answer found.")
 
-# Example usage
-if __name__ == "__main__":
-    import sys
-    import os
 
-    # Add parent directory to path to import from sibling packages
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
-    from src.tasks.loader import DocumentLoader
-    from src.tasks.embeddings import EmbeddingManager
-
-    # Load and process documents
-    doc_loader = DocumentLoader()
-    documents = doc_loader.load_pdf(os.path.join("..", "data", "stats.pdf"), verbose=True)
-    split_docs = doc_loader.split_documents(documents)
-
-    # Create vector store
-    embedding_manager = EmbeddingManager()
-    vectorstore = embedding_manager.create_vector_store(split_docs)
-
-    # Create QA chain
-    qa_chain = QAChain()
-    chain = qa_chain.create_chain(vectorstore)
-
-    # Ask a question
-    question = "What is the main topic of this document?"
-    answer = qa_chain.get_answer(chain, question)
-
-    print("\n" + "="*50)
-    print("QUESTION & ANSWER")
-    print("="*50)
-    print(f"Question: {question}")
-    print("-"*50)
-    print(f"Answer: {answer}")
-    print("="*50)
