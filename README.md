@@ -121,9 +121,9 @@ LLM_Questiona_Answering_Application/
    - Together.ai's DeepSeek-V3 model generates an answer based on the retrieved context
    - The answer is displayed to the user in the chat interface
 
-## 📑 Document Processing Preview
+## 📑 Document Processing and Content Preview
 
-![Document Processing](https://drive.google.com/uc?export=view&id=1WNeuM4O6JtxDBI3JMMClpChSlOUrDStx)
+![Document Processing](https://drive.google.com/uc?id=1l_PFtZU-dvjJ4mW-i0d89FyWJwrGlW_8)
 *Document processing and content preview*
 
 
