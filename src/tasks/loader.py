@@ -20,7 +20,7 @@ load_dotenv()
 class DocumentLoader:
     """Class for loading and processing various document types."""
 
-    def __init__(self, chunk_size=1000, chunk_overlap=200):
+    def __init__(self, chunk_size=500, chunk_overlap=50):
         """Initialize with text splitting parameters."""
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
